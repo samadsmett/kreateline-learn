@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>60-Day Editing Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #0A0A0A;
+  --yellow: #FFFB00;
+  --yellow-dim: #FFFB0022;
+  --yellow-glow: #FFFB0055;
+  --white: #FFFFFF;
+  --grey: #A3A3A3;
+  --grey-dark: #333;
+  --grey-card: #141414;
+  --grey-hover: #1A1A1A;
+  --green: #34D399;
+  --green-dim: #34D39933;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --black: #0A0A0A; --white: #FFFFFF; }
+}
+:root[data-theme="dark"] { --black: #0A0A0A; --white: #FFFFFF; }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+.container { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+
+/* ── HERO ── */
+.hero { padding: 80px 0 48px; text-align: left; }
+
+.hero-brand {
+  font-size: 13px; font-weight: 600; color: var(--yellow);
+  letter-spacing: 0.02em; margin-bottom: 32px;
+}
+
+.hero h1 {
+  font-size: clamp(36px, 8vw, 52px); font-weight: 900;
+  line-height: 1.05; margin-bottom: 20px; letter-spacing: -0.03em;
+}
+
+.hero h1 .yellow { color: var(--yellow); }
+
+.hero-sub {
+  font-size: 16px; color: var(--grey);
+  max-width: 440px; line-height: 1.6;
+}
+
+/* ── XP BAR ── */
+.xp-section {
+  background: var(--grey-card);
+  border-radius: 16px;
+  padding: 28px 24px;
+  margin-bottom: 16px;
+  border: 1px solid #1E1E1E;
+}
+
+.xp-top {
+  display: flex; align-items: center; gap: 24px; margin-bottom: 20px;
+}
+
+.wheel-wrap {
+  position: relative; width: 110px; height: 110px; flex-shrink: 0;
+}
+
+.wheel-svg { width: 110px; height: 110px; transform: rotate(-90deg); }
+
+.wheel-track { fill: none; stroke: var(--grey-dark); stroke-width: 8; }
+
+.wheel-fill {
+  fill: none; stroke: var(--yellow); stroke-width: 8;
+  stroke-linecap: round; stroke-dasharray: 289; stroke-dashoffset: 289;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wheel-fill.complete { stroke: var(--green); }
+
+.wheel-center {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%); text-align: center;
+}
+
+.wheel-pct {
+  font-size: 26px; font-weight: 900; color: var(--yellow);
+  line-height: 1; letter-spacing: -0.03em;
+}
+
+.wheel-pct.complete { color: var(--green); }
+.wheel-label { font-size: 12px; color: var(--grey); margin-top: 2px; }
+
+.xp-stats { flex: 1; }
+
+.xp-points {
+  font-size: 36px; font-weight: 900; color: var(--yellow);
+  line-height: 1; letter-spacing: -0.03em;
+}
+
+.xp-points-label {
+  font-size: 12px; color: var(--grey); font-weight: 600;
+  letter-spacing: 0.05em; margin-bottom: 12px;
+}
+
+.xp-meta {
+  display: flex; gap: 20px;
+}
+
+.xp-meta-item { display: flex; flex-direction: column; }
+
+.xp-meta-val {
+  font-size: 16px; font-weight: 800; color: var(--white);
+}
+
+.xp-meta-label { font-size: 13px; color: var(--grey); }
+
+/* Step progress bars */
+.step-bars { display: flex; flex-direction: column; gap: 8px; }
+
+.step-bar-row { display: flex; align-items: center; gap: 12px; }
+
+.step-bar-label {
+  font-size: 13px; font-weight: 600; color: #C8C8C8;
+  min-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.step-bar-track {
+  flex: 1; height: 6px; background: var(--grey-dark);
+  border-radius: 3px; overflow: hidden;
+}
+
+.step-bar-fill {
+  height: 100%; width: 0%; background: var(--yellow);
+  border-radius: 3px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s;
+}
+
+.step-bar-fill.complete { background: var(--green); }
+
+.step-bar-count {
+  font-size: 13px; font-weight: 700; color: var(--grey); min-width: 32px; text-align: right;
+}
+
+.step-bar-count.complete { color: var(--green); }
+
+
+/* ── STICKY BAR ── */
+.sticky-bar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--black); padding: 12px 0;
+  border-bottom: 1px solid #1A1A1A;
+}
+
+.sticky-inner { display: flex; align-items: center; gap: 12px; }
+
+.sticky-xp {
+  font-size: 13px; font-weight: 800; color: var(--yellow);
+  white-space: nowrap; min-width: 56px;
+}
+
+.sticky-bar-track {
+  flex: 1; height: 4px; background: var(--grey-dark);
+  border-radius: 2px; overflow: hidden;
+}
+
+.sticky-bar-fill {
+  height: 100%; width: 0%; background: var(--yellow);
+  border-radius: 2px; transition: width 0.4s ease;
+}
+
+.sticky-bar-fill.complete { background: var(--green); }
+
+.sticky-count {
+  font-size: 12px; font-weight: 700; color: var(--grey); white-space: nowrap;
+}
+
+.sticky-count.complete { color: var(--green); }
+
+/* ── STEPS ── */
+.steps {
+  padding: 0 0 40px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+.step {
+  background: var(--grey-card);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid transparent;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.step.completed {
+  border-color: #34D39944;
+}
+
+.step.just-completed {
+  border-color: var(--green);
+  box-shadow: 0 0 24px var(--green-dim);
+}
+
+.step-header {
+  padding: 20px 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  user-select: none;
+}
+
+.step-header:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: -2px;
+  border-radius: 12px;
+}
+
+.step-number {
+  font-size: 32px; font-weight: 900; color: var(--yellow);
+  line-height: 1; min-width: 44px; letter-spacing: -0.03em;
+}
+
+.step.completed .step-number { color: var(--green); }
+
+.step-header-text { flex: 1; padding-top: 4px; }
+
+.step-title { font-size: 18px; font-weight: 700; line-height: 1.2; margin-bottom: 4px; }
+
+.step-weeks { font-size: 14px; color: var(--grey); }
+
+.step-progress-pip { display: flex; gap: 4px; margin-top: 6px; }
+
+.pip {
+  width: 16px; height: 3px; background: var(--grey-dark);
+  border-radius: 2px; transition: background 0.2s;
+}
+
+.pip.done { background: var(--yellow); }
+.step.completed .pip.done { background: var(--green); }
+
+.step-badge {
+  font-size: 10px; font-weight: 700; color: var(--green);
+  background: var(--green-dim);
+  padding: 3px 8px; border-radius: 4px;
+  display: none; margin-top: 6px; white-space: nowrap;
+}
+
+.step.completed .step-badge { display: inline-block; }
+
+.step-toggle {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 6px; color: var(--grey);
+  transition: transform 0.25s ease, color 0.2s;
+  flex-shrink: 0;
+}
+
+.step.open .step-toggle { transform: rotate(180deg); color: var(--yellow); }
+
+.step-body { display: none; padding: 0 24px 24px; }
+.step.open .step-body { display: block; }
+
+.step-intro {
+  font-size: 15px; color: var(--grey);
+  margin-bottom: 20px; padding-left: 60px; line-height: 1.6;
+}
+
+.tasks {
+  display: flex; flex-direction: column; gap: 2px; padding-left: 60px;
+}
+
+.task {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 10px 12px; border-radius: 8px;
+  cursor: pointer; user-select: none;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.task:hover { background: var(--grey-hover); }
+.task:active { transform: scale(0.99); }
+
+.task-check {
+  width: 20px; height: 20px;
+  border: 2px solid var(--grey-dark);
+  border-radius: 5px; flex-shrink: 0; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+
+.task.done .task-check {
+  background: var(--green); border-color: var(--green);
+  animation: checkPop 0.3s ease;
+}
+
+@keyframes checkPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+.task.done .task-check svg { opacity: 1; }
+
+.task-check svg { width: 12px; height: 12px; opacity: 0; transition: opacity 0.15s; }
+
+.task-text { font-size: 14px; line-height: 1.5; color: #CCC; transition: color 0.15s; }
+
+.task.done .task-text {
+  color: var(--grey);
+  text-decoration: line-through;
+  text-decoration-color: #555;
+}
+
+.task-xp {
+  font-size: 11px; font-weight: 700; color: var(--yellow);
+  opacity: 0; margin-left: auto; white-space: nowrap;
+  flex-shrink: 0; padding-top: 3px;
+}
+
+.task.done .task-xp { opacity: 1; }
+
+/* ── XP POPUP ── */
+.xp-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  font-size: 48px;
+  font-weight: 900;
+  color: var(--yellow);
+  pointer-events: none;
+  z-index: 200;
+  opacity: 0;
+  text-shadow: 0 0 40px var(--yellow-glow);
+}
+
+.xp-popup.show {
+  animation: xpBurst 0.8s cubic-bezier(0.2, 0, 0, 1) forwards;
+}
+
+@keyframes xpBurst {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  60% { opacity: 1; transform: translate(-50%, -60%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -80%) scale(0.8); }
+}
+
+/* ── LEVEL UP BANNER ── */
+.level-banner {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: linear-gradient(135deg, var(--green), #059669);
+  padding: 16px 24px;
+  text-align: center;
+  z-index: 300;
+  transform: translateY(-100%);
+  transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.level-banner.show { transform: translateY(0); }
+
+.level-banner-text {
+  font-size: 16px; font-weight: 800; color: var(--black);
+}
+
+.level-banner-sub {
+  font-size: 12px; color: #065F46; font-weight: 600;
+}
+
+/* ── CONFETTI ── */
+.confetti-container {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 250; overflow: hidden;
+}
+
+.confetti {
+  position: absolute;
+  width: 8px; height: 8px;
+  top: -10px;
+  animation: confettiFall 1.8s ease-in forwards;
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center; padding: 40px 0 60px;
+  border-top: 1px solid #1A1A1A;
+}
+
+.footer-brand { font-size: 14px; font-weight: 700; color: var(--yellow); margin-bottom: 6px; }
+.footer-sub { font-size: 13px; color: var(--grey); }
+
+.reset-row { text-align: center; padding-bottom: 20px; }
+
+.reset-btn {
+  background: none; border: 1px solid var(--grey-dark);
+  color: var(--grey); font-size: 12px; padding: 6px 16px;
+  border-radius: 6px; cursor: pointer; font-family: inherit;
+  transition: all 0.15s;
+}
+
+.reset-btn:hover { border-color: var(--grey); color: var(--white); }
+
+.reset-confirm {
+  display: none; gap: 8px; align-items: center; justify-content: center;
+}
+
+.reset-confirm.show { display: flex; }
+
+.reset-confirm span { font-size: 12px; color: var(--grey); }
+
+.reset-yes, .reset-no {
+  font-size: 12px; padding: 5px 14px; border-radius: 6px;
+  cursor: pointer; font-family: inherit; border: none;
+}
+
+.reset-yes { background: #DC2626; color: white; }
+.reset-yes:hover { background: #EF4444; }
+.reset-no { background: var(--grey-dark); color: var(--white); }
+.reset-no:hover { background: #444; }
+
+/* ── COMPLETION OVERLAY ── */
+.complete-overlay {
+  position: fixed; inset: 0; z-index: 400;
+  background: rgba(10, 10, 10, 0.95);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 16px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.complete-overlay.show { opacity: 1; pointer-events: auto; }
+
+.complete-trophy { font-size: 72px; animation: trophyBounce 0.6s ease; }
+
+@keyframes trophyBounce {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.3); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.complete-title {
+  font-size: clamp(28px, 7vw, 44px); font-weight: 900;
+  text-align: center; line-height: 1.1; letter-spacing: -0.03em;
+}
+
+.complete-title .yellow { color: var(--yellow); }
+
+.complete-xp {
+  font-size: 48px; font-weight: 900; color: var(--yellow);
+  text-shadow: 0 0 40px var(--yellow-glow);
+}
+
+.complete-sub {
+  font-size: 16px; color: var(--grey); text-align: center;
+  max-width: 340px; line-height: 1.6;
+}
+
+.complete-cta {
+  margin-top: 12px; padding: 14px 32px;
+  background: var(--yellow); color: var(--black);
+  font-size: 14px; font-weight: 700; border: none;
+  border-radius: 8px; cursor: pointer; font-family: inherit;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.complete-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px var(--yellow-glow);
+}
+
+@media (max-width: 480px) {
+  .xp-top { gap: 16px; }
+  .wheel-wrap { width: 88px; height: 88px; }
+  .wheel-svg { width: 88px; height: 88px; }
+  .wheel-pct { font-size: 20px; }
+  .xp-points { font-size: 28px; }
+  .step-header { padding: 16px; gap: 12px; }
+  .step-number { font-size: 26px; min-width: 36px; }
+  .step-title { font-size: 16px; }
+  .step-intro, .tasks { padding-left: 48px; }
+  .step-body { padding: 0 16px 20px; }
+  .step-bar-label { min-width: 96px; font-size: 12px; }
+}
+
+/* ── UP NEXT ── */
+.next-card { border: 2px solid var(--yellow); border-radius: 18px; padding: 22px 22px 20px; margin-bottom: 16px; background: #0F0F0A; }
+.next-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+.next-day { font-size: 15px; font-weight: 800; color: var(--yellow); white-space: nowrap; }
+.next-step { font-size: 13px; color: var(--grey); text-align: right; }
+.next-label { font-size: 13px; color: var(--grey); margin-bottom: 4px; }
+.next-task { font-size: 21px; font-weight: 700; line-height: 1.35; color: var(--white); transition: opacity .25s, transform .25s; }
+.next-task.swap { opacity: 0; transform: translateY(6px); }
+.next-card .task-link { margin-top: 10px; font-size: 14px; }
+.next-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin-top: 18px;
+  padding: 16px; border: 0; border-radius: 12px; background: var(--yellow); color: #0A0A0A;
+  font: inherit; font-size: 16px; font-weight: 800; cursor: pointer; transition: transform .1s; }
+.next-btn:active { transform: scale(.98); }
+.next-btn:focus-visible { outline: 3px solid var(--white); outline-offset: 3px; }
+.next-btn svg { width: 18px; height: 18px; }
+.next-sub { font-size: 14px; color: var(--grey); margin-top: 12px; text-align: center; }
+
+[hidden] { display: none !important; }
+.next-setup { margin-top: 16px; }
+.next-skip { display: block; width: 100%; margin-top: 10px; padding: 12px; background: none; border: 0;
+  color: var(--grey); font: inherit; font-size: 14px; font-weight: 600; text-decoration: underline;
+  text-underline-offset: 3px; cursor: pointer; }
+.next-skip:hover { color: var(--white); }
+details.setup-card summary { cursor: pointer; font-size: 15px; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+details.setup-card summary::-webkit-details-marker { display: none; }
+details.setup-card summary::after { content: "+"; color: var(--yellow); font-weight: 800; }
+details.setup-card[open] summary::after { content: "\2212"; }
+details.setup-card[open] summary { margin-bottom: 14px; }
+
+/* ── CURRENT STEP ── */
+.step { border: 1.5px solid transparent; }
+.step.current { border-color: var(--yellow); }
+.step.current .step-weeks::after { content: "You're here"; margin-left: 10px; padding: 2px 8px; border-radius: 99px;
+  background: var(--yellow); color: #0A0A0A; font-size: 11px; font-weight: 800; vertical-align: 1px; }
+
+/* ── IN-APP BROWSER NOTICE ── */
+.ig-banner { display: none; margin-top: 16px; padding: 14px 16px; border-radius: 12px;
+  background: var(--yellow); color: #0A0A0A; font-size: 14px; line-height: 1.45; }
+.ig-banner.show { display: block; }
+.ig-banner strong { display: block; font-size: 15px; margin-bottom: 2px; }
+
+/* ── SETUP CARD ── */
+.setup-card { background: var(--grey-card); border-radius: 16px; padding: 20px 24px; margin-bottom: 16px; }
+.setup-card h2 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+.setup-card > p { font-size: 14px; color: var(--grey); line-height: 1.55; margin-bottom: 14px; }
+.setup-list { list-style: none; display: flex; flex-direction: column; gap: 10px; counter-reset: s; }
+.setup-list li { counter-increment: s; display: flex; gap: 12px; font-size: 15px; line-height: 1.5; }
+.setup-list li::before { content: counter(s); flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+  background: #2A2A2A; color: var(--yellow); font-size: 12px; font-weight: 800;
+  display: grid; place-items: center; margin-top: 1px; }
+.setup-card a, .next-card a, .task-link { color: var(--yellow); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── TASK LEARN LINK ── */
+.task-link { display: inline-block; margin-top: 6px; font-size: 13px; font-weight: 600; padding: 4px 0; }
+
+@media (max-width: 480px) {
+  .hero { padding: 40px 0 28px; }
+  .hero-brand { margin-bottom: 20px; }
+  .step-intro, .tasks { padding-left: 0; }
+  .task { padding: 12px 8px; }
+  .setup-card { padding: 18px 16px; }
+}
+
+/* ── DESKTOP: two columns ── */
+@media (min-width: 1000px) {
+  .container.layout { max-width: 1180px; padding: 0 40px;
+    display: grid; grid-template-columns: 400px minmax(0, 1fr); column-gap: 56px; align-items: start; }
+  .side { position: sticky; top: 0; max-height: 100vh; overflow-y: auto; padding-bottom: 32px; scrollbar-width: none; }
+  .side::-webkit-scrollbar { display: none; }
+  .side .hero { padding: 64px 0 32px; }
+  .main { padding-top: 64px; min-width: 0; }
+  .main .sticky-bar { display: none; }
+  .layout > .footer { grid-column: 1 / -1; }
+  .task:hover { background: #1E1E1E; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="container layout">
+<aside class="side">
+
+  <div class="hero">
+    <div class="hero-brand">@samadsmett</div>
+    <h1>60-Day Editing<br><span class="yellow">Challenge</span></h1>
+    <p class="hero-sub">30 tasks. 5 levels. Check off each one, earn XP, and track your progress. How far can you get?</p>
+    <div class="ig-banner" id="igBanner"><strong>Open this in your browser</strong>Tap the &middot;&middot;&middot; menu at the top and choose "Open in browser". Instagram's browser can wipe your progress.</div>
+  </div>
+
+  <!-- UP NEXT -->
+  <div class="next-card" id="nextCard">
+    <div class="next-top"><span class="next-day" id="dayText">Day 1 of 60</span><span class="next-step" id="nextStep"></span></div>
+    <div class="next-label" id="nextLabel">Up next</div>
+    <p class="next-task" id="nextTask"></p>
+    <ol class="setup-list next-setup" id="nextSetup" hidden>
+      <li><span>Download a free editor. <a href="https://www.capcut.com/tools/desktop-video-editor" target="_blank" rel="noopener">CapCut Desktop</a> if you're new, <a href="https://www.blackmagicdesign.com/products/davinciresolve" target="_blank" rel="noopener">DaVinci Resolve</a> if your laptop can handle it.</span></li>
+      <li><span>Watch one beginner walkthrough for your editor. <a href="https://www.youtube.com/results?search_query=capcut+desktop+beginner+tutorial" target="_blank" rel="noopener">CapCut</a> or <a href="https://www.youtube.com/results?search_query=davinci+resolve+beginner+tutorial" target="_blank" rel="noopener">Resolve</a>.</span></li>
+      <li><span>Import any clip from your phone, cut it into three parts, and drop music under it.</span></li>
+      <li><span>Export it. That's your first edit.</span></li>
+    </ol>
+    <a class="task-link" id="nextLink" target="_blank" rel="noopener" hidden>Watch a breakdown</a>
+    <button class="next-btn" id="nextBtn"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Mark as done</span></button>
+    <button class="next-skip" id="nextSkip" hidden>I've edited before, skip this</button>
+    <div class="next-sub" id="nextSub"></div>
+  </div>
+
+  <!-- XP DASHBOARD -->
+  <div class="xp-section">
+    <div class="xp-top">
+      <div class="wheel-wrap">
+        <svg class="wheel-svg" viewBox="0 0 110 110">
+          <circle class="wheel-track" cx="55" cy="55" r="46"/>
+          <circle class="wheel-fill" id="wheelFill" cx="55" cy="55" r="46"/>
+        </svg>
+        <div class="wheel-center">
+          <div class="wheel-pct" id="wheelPct">0%</div>
+          <div class="wheel-label">complete</div>
+        </div>
+      </div>
+      <div class="xp-stats">
+        <div class="xp-points" id="xpTotal">0</div>
+        <div class="xp-points-label">XP EARNED</div>
+        <div class="xp-meta">
+          <div class="xp-meta-item">
+            <span class="xp-meta-val" id="statDone">0</span>
+            <span class="xp-meta-label">completed</span>
+          </div>
+          <div class="xp-meta-item">
+            <span class="xp-meta-val" id="statLeft">30</span>
+            <span class="xp-meta-label">remaining</span>
+          </div>
+          <div class="xp-meta-item">
+            <span class="xp-meta-val" id="statLevel">1</span>
+            <span class="xp-meta-label">level</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="step-bars" id="stepBars">
+      <div class="step-bar-row"><span class="step-bar-label">How Editing Works</span><div class="step-bar-track"><div class="step-bar-fill" id="bar1"></div></div><span class="step-bar-count" id="barCount1">0/6</span></div>
+      <div class="step-bar-row"><span class="step-bar-label">Fundamentals</span><div class="step-bar-track"><div class="step-bar-fill" id="bar2"></div></div><span class="step-bar-count" id="barCount2">0/6</span></div>
+      <div class="step-bar-row"><span class="step-bar-label">Study & Recreate</span><div class="step-bar-track"><div class="step-bar-fill" id="bar3"></div></div><span class="step-bar-count" id="barCount3">0/6</span></div>
+      <div class="step-bar-row"><span class="step-bar-label">Build Your Style</span><div class="step-bar-track"><div class="step-bar-fill" id="bar4"></div></div><span class="step-bar-count" id="barCount4">0/6</span></div>
+      <div class="step-bar-row"><span class="step-bar-label">Edit, Post, Repeat</span><div class="step-bar-track"><div class="step-bar-fill" id="bar5"></div></div><span class="step-bar-count" id="barCount5">0/6</span></div>
+    </div>
+  </div>
+
+
+</aside>
+<main class="main">
+
+  <!-- STICKY BAR -->
+  <div class="sticky-bar" id="stickyBar">
+    <div class="container">
+      <div class="sticky-inner">
+        <span class="sticky-xp" id="stickyXp">0 XP</span>
+        <div class="sticky-bar-track">
+          <div class="sticky-bar-fill" id="stickyFill"></div>
+        </div>
+        <span class="sticky-count" id="stickyCount">0/30</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETUP (reference after setup is done) -->
+  <details class="setup-card" id="setupRef" hidden>
+    <summary>Setup guide: free editors and beginner walkthroughs</summary>
+    <ol class="setup-list">
+      <li><span>Download a free editor. <a href="https://www.capcut.com/tools/desktop-video-editor" target="_blank" rel="noopener">CapCut Desktop</a> if you're new, <a href="https://www.blackmagicdesign.com/products/davinciresolve" target="_blank" rel="noopener">DaVinci Resolve</a> if your laptop can handle it.</span></li>
+      <li><span>Watch one beginner walkthrough for your editor. <a href="https://www.youtube.com/results?search_query=capcut+desktop+beginner+tutorial" target="_blank" rel="noopener">CapCut</a> or <a href="https://www.youtube.com/results?search_query=davinci+resolve+beginner+tutorial" target="_blank" rel="noopener">Resolve</a>.</span></li>
+      <li><span>Import any clip from your phone, cut it into three parts, and drop music under it.</span></li>
+      <li><span>Export it. That's your first edit.</span></li>
+    </ol>
+  </details>
+
+  <!-- STEPS -->
+  <div class="steps" id="steps">
+
+    <div class="step" data-step="1">
+      <div class="step-header" tabindex="0" role="button" aria-expanded="false">
+        <div class="step-number">01</div>
+        <div class="step-header-text">
+          <div class="step-title">Learn How Editing Works</div>
+          <div class="step-weeks">Week 1–2</div>
+          <div class="step-progress-pip"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
+          <div class="step-badge">LEVEL COMPLETE</div>
+        </div>
+        <div class="step-toggle"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="step-intro">Watch videos you love and ask yourself why they work. You're not editing yet. You're learning to see what editors do.</p>
+        <div class="tasks">
+          <div class="task" data-task="1-1"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Watch 3 videos you love. Write down what makes each one feel good.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="1-2"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Pick one video and watch it 5 times. Notice something new each time.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="1-3"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Start a Cut Journal. Write 3 editing decisions you spotted today.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="1-4"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Watch a video with the sound off. Does the edit still work?</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="1-5"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Notice what was left out of an edit. What did the editor choose not to show?</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="1-6"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Fill your Cut Journal for 14 days straight. 42 observations total.</div><div class="task-xp">+100 XP</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="2">
+      <div class="step-header" tabindex="0" role="button" aria-expanded="false">
+        <div class="step-number">02</div>
+        <div class="step-header-text">
+          <div class="step-title">Master the Fundamentals</div>
+          <div class="step-weeks">Week 2–3</div>
+          <div class="step-progress-pip"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
+          <div class="step-badge">LEVEL COMPLETE</div>
+        </div>
+        <div class="step-toggle"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="step-intro">Now you learn the core skills. These six things are behind every good edit, no matter what software you use.</p>
+        <div class="tasks">
+          <div class="task" data-task="2-1"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Learn your cuts: hard cuts, jump cuts, match cuts. Know what each one feels like.<br><a class="task-link" href="https://www.youtube.com/results?search_query=jump+cut+match+cut+explained+video+editing" target="_blank" rel="noopener">Watch a breakdown</a></div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="2-2"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Practice pacing. Edit the same clip fast, then slow. Feel the difference.<br><a class="task-link" href="https://www.youtube.com/results?search_query=pacing+in+video+editing+explained" target="_blank" rel="noopener">Watch a breakdown</a></div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="2-3"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Layer audio: ambient sound first, then SFX, then music. Not the other way.<br><a class="task-link" href="https://www.youtube.com/results?search_query=sound+design+layering+video+editing+beginner" target="_blank" rel="noopener">Watch a breakdown</a></div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="2-4"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Try a J-cut and an L-cut. Let audio lead or trail the image.<br><a class="task-link" href="https://www.youtube.com/results?search_query=j+cut+l+cut+explained" target="_blank" rel="noopener">Watch a breakdown</a></div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="2-5"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Shift colour mid-edit, warm to cool. See how it changes the mood.<br><a class="task-link" href="https://www.youtube.com/results?search_query=color+grading+for+beginners+mood" target="_blank" rel="noopener">Watch a breakdown</a></div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="2-6"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Add on-screen text timed to audio. If they have to pause to read it, it's too long.<br><a class="task-link" href="https://www.youtube.com/results?search_query=animated+text+captions+timed+to+audio+tutorial" target="_blank" rel="noopener">Watch a breakdown</a></div><div class="task-xp">+100 XP</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="3">
+      <div class="step-header" tabindex="0" role="button" aria-expanded="false">
+        <div class="step-number">03</div>
+        <div class="step-header-text">
+          <div class="step-title">Study & Recreate</div>
+          <div class="step-weeks">Week 3–4</div>
+          <div class="step-progress-pip"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
+          <div class="step-badge">LEVEL COMPLETE</div>
+        </div>
+        <div class="step-toggle"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="step-intro">Pick 3 creators you admire. Break down their edits frame by frame. Then rebuild them with your own footage.</p>
+        <div class="tasks">
+          <div class="task" data-task="3-1"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Pick 3 editors: one fast-paced, one cinematic, one minimal.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="3-2"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Screen-record 5 of their videos. Import into your editor. Mark every cut.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="3-3"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Recreate one edit shot for shot. Match timing, pacing, audio placement.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="3-4"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Recreate a second edit from a different creator.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="3-5"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Recreate a third. Write one paragraph about what surprised you each time.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="3-6"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Compile your notes. This is your editing playbook.</div><div class="task-xp">+100 XP</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="4">
+      <div class="step-header" tabindex="0" role="button" aria-expanded="false">
+        <div class="step-number">04</div>
+        <div class="step-header-text">
+          <div class="step-title">Build Your Style</div>
+          <div class="step-weeks">Week 4–6</div>
+          <div class="step-progress-pip"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
+          <div class="step-badge">LEVEL COMPLETE</div>
+        </div>
+        <div class="step-toggle"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="step-intro">Experiment with everything you've learned. Your style is what remains when you stop copying others.</p>
+        <div class="tasks">
+          <div class="task" data-task="4-1"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Edit the same 30 seconds of footage three different ways.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="4-2"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Remove all music from an edit. Does it still work?</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="4-3"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Edit using only hard cuts. No transitions, no effects.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="4-4"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Edit entirely to sound design. Foley and SFX only, no music.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="4-5"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Speed-ramp where nobody would. Hold a shot twice as long as feels right.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="4-6"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Review all your experiments. Write down the patterns. That's your style forming.</div><div class="task-xp">+100 XP</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="5">
+      <div class="step-header" tabindex="0" role="button" aria-expanded="false">
+        <div class="step-number">05</div>
+        <div class="step-header-text">
+          <div class="step-title">Edit, Post, Repeat</div>
+          <div class="step-weeks">Week 6–8+</div>
+          <div class="step-progress-pip"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
+          <div class="step-badge">CHALLENGE COMPLETE</div>
+        </div>
+        <div class="step-toggle"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="step-body">
+        <p class="step-intro">Edit every day. Start posting. Watch what works. The best editors never stopped being students.</p>
+        <div class="tasks">
+          <div class="task" data-task="5-1"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Edit for 30 minutes a day for 7 days straight. Any footage. Just edit.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="5-2"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Watch all 7 edits back to back on Sunday. See how your instincts sharpened.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="5-3"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Post your first edit publicly. Don't overthink it. Just post.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="5-4"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Post 3 more edits this week. Watch your retention curves. Where do people drop off?</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="5-5"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Start a swipe file. Save every edit that makes you feel something.</div><div class="task-xp">+100 XP</div></div>
+          <div class="task" data-task="5-6"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Teach one thing you learned. Post a tip or break down one of your edits.</div><div class="task-xp">+100 XP</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="reset-row">
+    <button class="reset-btn" id="resetBtn">Reset progress</button>
+    <div class="reset-confirm" id="resetConfirm">
+      <span>Are you sure?</span>
+      <button class="reset-yes" id="resetYes">Yes, reset</button>
+      <button class="reset-no" id="resetNo">Cancel</button>
+    </div>
+  </div>
+
+</main>
+
+  <div class="footer">
+    <div class="footer-brand">@samadsmett</div>
+    <div class="footer-sub">Follow for more editing frameworks. <a href="/" style="color:var(--yellow);text-underline-offset:3px">See all free resources</a></div>
+  </div>
+
+</div>
+
+<!-- Level-up banner -->
+<div class="level-banner" id="levelBanner">
+  <div class="level-banner-text" id="levelText"></div>
+  <div class="level-banner-sub" id="levelSub"></div>
+</div>
+
+<!-- XP popup -->
+<div class="xp-popup" id="xpPopup"></div>
+
+<!-- Confetti container -->
+<div class="confetti-container" id="confettiBox"></div>
+
+<!-- Completion overlay -->
+<div class="complete-overlay" id="completeOverlay">
+  <div class="complete-trophy">🏆</div>
+  <div class="complete-title">Challenge<br><span class="yellow">Complete</span></div>
+  <div class="complete-xp" id="completeXp">4,250 XP</div>
+  <p class="complete-sub">You finished all 30 tasks across 5 levels. You didn't just learn editing. You built a style. Now go make something only you could make.</p>
+  <button class="complete-cta" id="completeDismiss">Back to challenge</button>
+</div>
+
+<script>
+(function() {
+  const KEY = 'smett-60day-v3';
+  const TOTAL = 30;
+  const PER_STEP = 6;
+  const XP_PER_TASK = 100;
+  const BONUS_PER_LEVEL = 250;
+  const CIRC = 2 * Math.PI * 46;
+  let done = new Set();
+  let prevLevels = 0;
+
+  try {
+    const s = localStorage.getItem(KEY);
+    if (s) done = new Set(JSON.parse(s));
+  } catch(e) {}
+
+  const START_KEY = 'smett-60day-start';
+  function getStart() { try { return +localStorage.getItem(START_KEY) || 0; } catch(e) { return 0; } }
+  function setStart() { try { if (!getStart()) localStorage.setItem(START_KEY, String(Date.now())); } catch(e) {} }
+
+  const SETUP_KEY = 'smett-60day-setup';
+  function setupDone() { try { return localStorage.getItem(SETUP_KEY) === '1'; } catch(e) { return false; } }
+  function markSetup() { try { localStorage.setItem(SETUP_KEY, '1'); } catch(e) {} }
+
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify([...done])); } catch(e) {}
+  }
+
+  function stepDone(n) {
+    let c = 0;
+    for (let i = 1; i <= PER_STEP; i++) if (done.has(n + '-' + i)) c++;
+    return c;
+  }
+
+  function levelsComplete() {
+    let l = 0;
+    for (let s = 1; s <= 5; s++) if (stepDone(s) === PER_STEP) l++;
+    return l;
+  }
+
+  function totalXp() {
+    return (done.size * XP_PER_TASK) + (levelsComplete() * BONUS_PER_LEVEL);
+  }
+
+  function currentLevel() {
+    for (let s = 1; s <= 5; s++) if (stepDone(s) < PER_STEP) return s;
+    return 5;
+  }
+
+  const LEVEL_NAMES = ['', 'How Editing Works', 'Fundamentals', 'Study & Recreate', 'Build Your Style', 'Edit, Post, Repeat'];
+
+  // Confetti
+  function fireConfetti() {
+    const box = document.getElementById('confettiBox');
+    const colors = ['#FFFB00', '#34D399', '#FFFFFF', '#FFFB00', '#34D399'];
+    for (let i = 0; i < 40; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.left = Math.random() * 100 + '%';
+      c.style.background = colors[Math.floor(Math.random() * colors.length)];
+      c.style.animationDelay = Math.random() * 0.5 + 's';
+      c.style.animationDuration = (1.2 + Math.random() * 1) + 's';
+      c.style.width = (4 + Math.random() * 6) + 'px';
+      c.style.height = (4 + Math.random() * 6) + 'px';
+      c.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+      box.appendChild(c);
+      setTimeout(() => c.remove(), 2500);
+    }
+  }
+
+  // XP popup
+  function showXpPopup(text) {
+    const p = document.getElementById('xpPopup');
+    p.textContent = text;
+    p.classList.remove('show');
+    void p.offsetWidth;
+    p.classList.add('show');
+    setTimeout(() => p.classList.remove('show'), 900);
+  }
+
+  // Level banner
+  function showLevelBanner(level, name) {
+    const b = document.getElementById('levelBanner');
+    document.getElementById('levelText').textContent = 'LEVEL ' + level + ' COMPLETE';
+    document.getElementById('levelSub').textContent = name + ' · +' + BONUS_PER_LEVEL + ' XP Bonus';
+    b.classList.add('show');
+    setTimeout(() => b.classList.remove('show'), 3000);
+  }
+
+  function update(taskJustDone) {
+    const count = done.size;
+    const pct = Math.round((count / TOTAL) * 100);
+    const isComplete = count === TOTAL;
+    const xp = totalXp();
+    const levels = levelsComplete();
+
+    // Wheel
+    const wheelFill = document.getElementById('wheelFill');
+    wheelFill.style.strokeDashoffset = CIRC - (CIRC * count / TOTAL);
+    wheelFill.classList.toggle('complete', isComplete);
+
+    const wheelPct = document.getElementById('wheelPct');
+    wheelPct.textContent = pct + '%';
+    wheelPct.classList.toggle('complete', isComplete);
+
+    // XP
+    document.getElementById('xpTotal').textContent = xp.toLocaleString();
+    document.getElementById('statDone').textContent = count;
+    document.getElementById('statLeft').textContent = TOTAL - count;
+    document.getElementById('statLevel').textContent = currentLevel();
+
+    // Step bars
+    for (let s = 1; s <= 5; s++) {
+      const sd = stepDone(s);
+      const full = sd === PER_STEP;
+      document.getElementById('bar' + s).style.width = (sd / PER_STEP * 100) + '%';
+      document.getElementById('bar' + s).classList.toggle('complete', full);
+      const bc = document.getElementById('barCount' + s);
+      bc.textContent = sd + '/' + PER_STEP;
+      bc.classList.toggle('complete', full);
+    }
+
+    // Sticky
+    document.getElementById('stickyXp').textContent = xp.toLocaleString() + ' XP';
+    document.getElementById('stickyFill').style.width = pct + '%';
+    document.getElementById('stickyFill').classList.toggle('complete', isComplete);
+    const sc = document.getElementById('stickyCount');
+    sc.textContent = count + '/' + TOTAL;
+    sc.classList.toggle('complete', isComplete);
+
+    // Tasks
+    document.querySelectorAll('.task').forEach(t => {
+      t.classList.toggle('done', done.has(t.dataset.task));
+    });
+
+    // Pips + step state
+    document.querySelectorAll('.step').forEach(step => {
+      const sn = step.dataset.step;
+      const pips = step.querySelectorAll('.pip');
+      for (let i = 0; i < pips.length; i++) {
+        pips[i].classList.toggle('done', done.has(sn + '-' + (i + 1)));
+      }
+      const allDone = stepDone(sn) === PER_STEP;
+      step.classList.toggle('completed', allDone);
+    });
+
+    // Day counter
+    const start = getStart();
+    let day = 1;
+    if (start) day = Math.floor((Date.now() - start) / 86400000) + 1;
+    document.getElementById('dayText').textContent = !start ? 'Day 1 of 60' : (day > 60 ? 'Day ' + day : 'Day ' + day + ' of 60');
+
+    // Current step highlight
+    const cur = isComplete ? 0 : currentLevel();
+    document.querySelectorAll('.step').forEach(st => st.classList.toggle('current', +st.dataset.step === cur));
+
+    // Up next
+    const nextEl = [...document.querySelectorAll('.task')].find(t => !done.has(t.dataset.task));
+    const nTask = document.getElementById('nextTask');
+    const nLink = document.getElementById('nextLink');
+    const nBtn = document.getElementById('nextBtn');
+    const nSub = document.getElementById('nextSub');
+    const inSetup = count === 0 && !setupDone();
+    document.getElementById('nextSetup').hidden = !inSetup;
+    document.getElementById('nextSkip').hidden = !inSetup;
+    document.getElementById('setupRef').hidden = inSetup;
+    nBtn.querySelector('span').textContent = inSetup ? "I'm set up" : 'Mark as done';
+    if (inSetup) {
+      document.getElementById('dayText').textContent = 'Before day 1';
+      document.getElementById('nextLabel').textContent = 'Start here';
+      document.getElementById('nextStep').textContent = 'Setup';
+      nTask.textContent = 'Never edited before? Get your editor ready first.';
+      nLink.hidden = true; nBtn.hidden = false; nBtn.dataset.task = 'setup';
+      nSub.textContent = 'Takes about an hour.';
+    } else if (nextEl) {
+      const sn = +nextEl.dataset.task.split('-')[0];
+      document.getElementById('nextLabel').textContent = 'Up next';
+      document.getElementById('nextStep').textContent = 'Step ' + sn + ': ' + LEVEL_NAMES[sn];
+      nTask.textContent = nextEl.querySelector('.task-text').childNodes[0].textContent.trim();
+      const l = nextEl.querySelector('.task-link');
+      if (l) { nLink.href = l.href; nLink.hidden = false; } else nLink.hidden = true;
+      nBtn.hidden = false;
+      nBtn.dataset.task = nextEl.dataset.task;
+      nSub.textContent = count === 0 ? 'Your 60 days start when you check your first task.'
+        : count + ' of 30 done. ' + (count < 10 ? 'You\'re warming up.' : count < 20 ? 'You\'re in the zone now.' : 'Almost there. Finish strong.');
+    } else {
+      document.getElementById('nextLabel').textContent = 'All done';
+      document.getElementById('nextStep').textContent = '';
+      nTask.textContent = 'You finished all 30 tasks. Now go make something only you could make.';
+      nLink.hidden = true; nBtn.hidden = true;
+      nSub.textContent = 'Finished on day ' + day + '.';
+    }
+
+    // Level-up check
+    if (taskJustDone && levels > prevLevels) {
+      const justFinished = parseInt(taskJustDone.split('-')[0]);
+      fireConfetti();
+      showLevelBanner(justFinished, LEVEL_NAMES[justFinished]);
+      const step = document.querySelector('.step[data-step="' + justFinished + '"]');
+      if (step) {
+        step.classList.add('just-completed');
+        setTimeout(() => step.classList.remove('just-completed'), 3000);
+      }
+    }
+
+    // Full challenge complete — show celebration overlay
+    if (taskJustDone && isComplete) {
+      document.getElementById('completeXp').textContent = xp.toLocaleString() + ' XP';
+      setTimeout(() => {
+        fireConfetti();
+        setTimeout(() => fireConfetti(), 400);
+        setTimeout(() => fireConfetti(), 800);
+        document.getElementById('completeOverlay').classList.add('show');
+      }, 500);
+    }
+
+    prevLevels = levels;
+  }
+
+  // Task clicks
+  document.querySelectorAll('.task').forEach(task => {
+    task.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      const id = task.dataset.task;
+      const adding = !done.has(id);
+      if (adding) {
+        done.add(id);
+        setStart();
+        showXpPopup('+' + XP_PER_TASK + ' XP');
+      } else {
+        done.delete(id);
+      }
+      save();
+      update(adding ? id : null);
+    });
+  });
+
+  function finishSetup() {
+    markSetup();
+    const nt = document.getElementById('nextTask');
+    nt.classList.add('swap'); update();
+    setTimeout(() => nt.classList.remove('swap'), 60);
+  }
+  document.getElementById('nextSkip').addEventListener('click', finishSetup);
+
+  // Up next button
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    const id = document.getElementById('nextBtn').dataset.task;
+    if (id === 'setup') { finishSetup(); return; }
+    const t = document.querySelector('.task[data-task="' + id + '"]');
+    if (!t) return;
+    const nt = document.getElementById('nextTask');
+    nt.classList.add('swap');
+    t.click();
+    requestAnimationFrame(() => setTimeout(() => nt.classList.remove('swap'), 60));
+    const st = t.closest('.step');
+    const nxt = document.querySelector('.step.current');
+    if (nxt && nxt !== st && !nxt.classList.contains('open')) { nxt.classList.add('open'); nxt.querySelector('.step-header').setAttribute('aria-expanded', 'true'); }
+  });
+
+  // Accordion
+  document.querySelectorAll('.step-header').forEach(h => {
+    h.addEventListener('click', () => {
+      const step = h.closest('.step');
+      const open = step.classList.toggle('open');
+      h.setAttribute('aria-expanded', open);
+    });
+    h.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); h.click(); }
+    });
+  });
+
+  // Reset — inline confirmation (no browser dialog)
+  const resetBtn = document.getElementById('resetBtn');
+  const resetConfirm = document.getElementById('resetConfirm');
+
+  resetBtn.addEventListener('click', () => {
+    resetBtn.style.display = 'none';
+    resetConfirm.classList.add('show');
+  });
+
+  document.getElementById('resetNo').addEventListener('click', () => {
+    resetConfirm.classList.remove('show');
+    resetBtn.style.display = '';
+  });
+
+  document.getElementById('resetYes').addEventListener('click', () => {
+    done.clear(); prevLevels = 0; try { localStorage.removeItem(START_KEY); localStorage.removeItem(SETUP_KEY); } catch(e) {} save(); update();
+    resetConfirm.classList.remove('show');
+    resetBtn.style.display = '';
+    // Close completion overlay if open
+    document.getElementById('completeOverlay').classList.remove('show');
+  });
+
+  // Dismiss completion overlay
+  document.getElementById('completeDismiss').addEventListener('click', () => {
+    document.getElementById('completeOverlay').classList.remove('show');
+  });
+
+  // Init
+  prevLevels = levelsComplete();
+  if (/Instagram|FBAN|FBAV|FB_IAB|TikTok|musical_ly/i.test(navigator.userAgent)) document.getElementById('igBanner').classList.add('show');
+  const first = [...document.querySelectorAll('.step')].find(st => [...st.querySelectorAll('.task')].some(t => !done.has(t.dataset.task))) || document.querySelector('.step[data-step="1"]');
+  if (first) { first.classList.add('open'); first.querySelector('.step-header').setAttribute('aria-expanded', 'true'); }
+  update();
+})();
+</script>
+</body>
+</html>
