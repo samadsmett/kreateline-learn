@@ -17,6 +17,8 @@
   --grey-dark: #333;
   --grey-card: #141414;
   --grey-hover: #1A1A1A;
+  --white-dim: rgba(255, 255, 255, 0.06);
+  --white-glow: rgba(255, 255, 255, 0.15);
   --green: #34D399;
   --green-dim: #34D39933;
 }
@@ -218,6 +220,7 @@ body {
   user-select: none;
 }
 
+.step-header:hover { background: var(--white-dim); transition: background 0.2s; }
 .step-header:focus-visible {
   outline: 2px solid var(--yellow);
   outline-offset: -2px;
@@ -266,8 +269,7 @@ body {
 
 .step.open .step-toggle { transform: rotate(180deg); color: var(--yellow); }
 
-.step-body { display: none; padding: 0 24px 24px; }
-.step.open .step-body { display: block; }
+/* step-body display handled by grid slide rules below */
 
 .step-intro {
   font-size: 15px; color: var(--grey);
@@ -286,6 +288,8 @@ body {
 }
 
 .task:hover { background: var(--grey-hover); }
+.task:hover .task-check:not(:has(+ .task-text)) { border-color: #666; }
+.task:not(.done):hover .task-check { border-color: var(--white); transition: border-color 0.15s; }
 .task:active { transform: scale(0.99); }
 
 .task-check {
@@ -572,6 +576,142 @@ details.setup-card[open] summary { margin-bottom: 14px; }
   .task:hover { background: #1E1E1E; }
 }
 
+/* ── FLOATING XP ── */
+.xp-float {
+  position: absolute;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--yellow);
+  pointer-events: none;
+  z-index: 150;
+  white-space: nowrap;
+  animation: xpFloat 1s cubic-bezier(0.2, 0, 0, 1) forwards;
+  text-shadow: 0 0 12px var(--yellow-glow);
+}
+
+@keyframes xpFloat {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  50% { opacity: 1; transform: translateY(-36px) scale(1.15); }
+  100% { opacity: 0; transform: translateY(-64px) scale(0.9); }
+}
+
+/* ── TASK JUST-DONE ── */
+.task.just-done {
+  background: rgba(255, 251, 0, 0.04);
+  transition: background 0.6s ease;
+}
+
+/* ── NEXT CARD PULSE ── */
+@keyframes cardPulse {
+  0% { box-shadow: 0 0 0 0 var(--yellow-glow); }
+  50% { box-shadow: 0 0 24px 4px var(--yellow-glow); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.next-card.pulse { animation: cardPulse 0.6s ease; }
+
+/* ── XP COUNTER TICK ── */
+@keyframes counterTick {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.xp-tick { animation: counterTick 0.35s ease; }
+
+/* ── STEP BODY SLIDE ── */
+.step-body {
+  display: grid !important;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s ease;
+  padding: 0 24px !important;
+  overflow: hidden;
+}
+.step.open .step-body {
+  grid-template-rows: 1fr;
+  padding-bottom: 24px !important;
+}
+.step-body-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── TASK STAGGER ── */
+.step.open .task {
+  opacity: 0;
+  animation: taskReveal 0.35s ease forwards;
+}
+@keyframes taskReveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.step.open .task:nth-child(1) { animation-delay: 0.05s; }
+.step.open .task:nth-child(2) { animation-delay: 0.1s; }
+.step.open .task:nth-child(3) { animation-delay: 0.15s; }
+.step.open .task:nth-child(4) { animation-delay: 0.2s; }
+.step.open .task:nth-child(5) { animation-delay: 0.25s; }
+.step.open .task:nth-child(6) { animation-delay: 0.3s; }
+.step.open .task.done { opacity: 1; animation: none; }
+
+/* ── SAVE PROGRESS (email) ── */
+.save-card { background: var(--grey-card); border: 1px solid #262626; border-radius: 18px; padding: 20px 20px 16px; margin-bottom: 16px;
+  opacity: 0; transform: translateY(10px); transition: opacity .4s ease, transform .4s cubic-bezier(.2,0,0,1); }
+.save-card.show { opacity: 1; transform: none; }
+.save-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 6px; }
+.save-head strong { font-size: 18px; font-weight: 800; line-height: 1.25; }
+.save-x { background: none; border: 0; color: var(--grey); font-size: 22px; line-height: 1; cursor: pointer; padding: 2px 4px; font-family: inherit; }
+.save-x:hover { color: var(--white); }
+.save-card p { font-size: 14px; color: var(--grey); line-height: 1.55; }
+.save-form { display: flex; gap: 8px; margin-top: 14px; }
+.save-form input { flex: 1; min-width: 0; padding: 14px; border-radius: 12px; border: 1px solid #333; background: #0A0A0A;
+  color: var(--white); font: inherit; font-size: 16px; }
+.save-form input:focus { outline: none; border-color: var(--yellow); }
+.save-form button, .link-row button { padding: 14px 16px; border: 0; border-radius: 12px; background: var(--yellow); color: #0A0A0A;
+  font: inherit; font-size: 15px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+.save-form button:disabled { opacity: .6; cursor: default; }
+.save-form button:focus-visible, .link-row button:focus-visible { outline: 3px solid var(--white); outline-offset: 2px; }
+.save-err { color: #F87171 !important; margin-top: 8px; }
+.save-fine { font-size: 12px !important; margin-top: 10px; color: #777 !important; }
+.save-done strong { display: block; font-size: 16px; color: var(--green); margin: 4px 0 4px; }
+.link-row { display: flex; gap: 8px; margin-top: 10px; }
+.link-row input { flex: 1; min-width: 0; padding: 12px; border-radius: 10px; border: 1px solid #333; background: #0A0A0A;
+  color: var(--grey); font: inherit; font-size: 13px; }
+.copy-prog { background: none; border: 1px solid var(--grey-dark); color: var(--grey); font-size: 12px; padding: 6px 16px;
+  border-radius: 6px; cursor: pointer; font-family: inherit; margin-left: 8px; transition: all .15s; }
+.copy-prog:hover { border-color: var(--grey); color: var(--white); }
+
+/* ── SHARE PROGRESS ── */
+.share-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 20px; padding: 13px;
+  background: none; border: 1.5px solid var(--yellow); border-radius: 12px; color: var(--yellow);
+  font: inherit; font-size: 15px; font-weight: 800; cursor: pointer; transition: background .15s, color .15s; }
+.share-btn:hover { background: var(--yellow); color: #0A0A0A; }
+.share-btn svg { width: 17px; height: 17px; }
+.share-card { display: flex; gap: 16px; align-items: center; background: var(--grey-card); border: 1.5px solid var(--green);
+  border-radius: 18px; padding: 16px; margin-bottom: 16px; opacity: 0; transform: translateY(10px);
+  transition: opacity .4s ease, transform .4s cubic-bezier(.2,0,0,1); }
+.share-card.show { opacity: 1; transform: none; }
+.share-card img { width: 84px; height: 149px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: #0A0A0A; border: 1px solid #262626; }
+.share-card strong { display: block; font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+.share-card p { font-size: 14px; color: var(--grey); line-height: 1.5; margin-bottom: 12px; }
+.share-card p b { color: var(--yellow); font-weight: 700; }
+.share-go { display: inline-flex; align-items: center; justify-content: center; padding: 12px 18px; border: 0; border-radius: 12px;
+  background: var(--yellow); color: #0A0A0A; font: inherit; font-size: 15px; font-weight: 800; cursor: pointer; text-decoration: none; }
+.share-later { background: none; border: 0; color: var(--grey); font: inherit; font-size: 14px; font-weight: 600; padding: 12px 10px; cursor: pointer; }
+.share-later:hover { color: var(--white); }
+.share-go:focus-visible, .share-btn:focus-visible, .share-later:focus-visible { outline: 3px solid var(--white); outline-offset: 2px; }
+.share-modal { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,.96); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.share-modal[hidden] { display: none !important; }
+.share-sheet { width: 100%; max-width: 360px; text-align: center; }
+.share-sheet img { display: block; margin: 0 auto; width: auto; max-width: 100%; max-height: 62vh; border-radius: 16px; border: 1px solid #262626; -webkit-touch-callout: default; }
+.share-sheet p { font-size: 15px; color: var(--white); line-height: 1.5; margin: 16px 0 14px; }
+.share-sheet p b { color: var(--yellow); }
+.share-actions { display: flex; justify-content: center; gap: 8px; }
+.toast { position: fixed; left: 50%; top: 20px; transform: translate(-50%, -20px); z-index: 600; background: var(--white); color: #0A0A0A;
+  font-size: 14px; font-weight: 700; padding: 12px 18px; border-radius: 12px; opacity: 0; pointer-events: none;
+  transition: opacity .25s, transform .25s; max-width: calc(100% - 32px); text-align: center; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.complete-actions { display: flex; gap: 10px; margin-top: 12px; }
+.complete-actions .complete-cta { margin-top: 0; }
+.complete-share { background: none !important; color: var(--yellow) !important; border: 1.5px solid var(--yellow) !important; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -606,6 +746,33 @@ details.setup-card[open] summary { margin-bottom: 14px; }
     <button class="next-btn" id="nextBtn"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Mark as done</span></button>
     <button class="next-skip" id="nextSkip" hidden>I've edited before, skip this</button>
     <div class="next-sub" id="nextSub"></div>
+  </div>
+
+  <!-- SHARE AFTER A LEVEL -->
+  <div class="share-card" id="shareCard" hidden>
+    <img id="shareThumb" alt="Preview of your progress card">
+    <div>
+      <strong id="shareCardTitle">Level 1 done.</strong>
+      <p>Post it to your story and tag <b>@samadsmett</b>. I repost people doing the challenge.</p>
+      <button class="share-go" id="shareCardBtn" type="button">Share to story</button><button class="share-later" id="shareCardLater" type="button">Later</button>
+    </div>
+  </div>
+
+  <!-- SAVE PROGRESS (email capture) -->
+  <div class="save-card" id="saveCard" hidden>
+    <div class="save-head"><strong>Don't lose your progress</strong><button class="save-x" id="saveClose" aria-label="Not now">&times;</button></div>
+    <p id="saveIntro">Instagram's browser can wipe what you've checked off. Add your email and I'll send you a check-in every week for the next 8 weeks. You'll also get a link that brings your progress back on any device.</p>
+    <form class="save-form" id="saveForm" novalidate>
+      <input type="email" id="saveEmail" name="email_address" placeholder="you@email.com" autocomplete="email" aria-label="Email address" required>
+      <button type="submit" id="saveBtn">Save my progress</button>
+    </form>
+    <p class="save-err" id="saveErr" hidden></p>
+    <p class="save-fine" id="saveFine">Weekly check-ins from @samadsmett. Unsubscribe anytime.</p>
+    <div class="save-done" id="saveDone" hidden>
+      <strong>You're in.</strong>
+      <p>Check your inbox to confirm your email. Bookmark this link to pick up where you left off on any device:</p>
+      <div class="link-row"><input readonly id="progLink" aria-label="Your progress link"><button type="button" id="copyLink">Copy</button></div>
+    </div>
   </div>
 
   <!-- XP DASHBOARD -->
@@ -647,6 +814,7 @@ details.setup-card[open] summary { margin-bottom: 14px; }
       <div class="step-bar-row"><span class="step-bar-label">Build Your Style</span><div class="step-bar-track"><div class="step-bar-fill" id="bar4"></div></div><span class="step-bar-count" id="barCount4">0/6</span></div>
       <div class="step-bar-row"><span class="step-bar-label">Edit, Post, Repeat</span><div class="step-bar-track"><div class="step-bar-fill" id="bar5"></div></div><span class="step-bar-count" id="barCount5">0/6</span></div>
     </div>
+    <button class="share-btn" id="shareBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg><span>Share my progress</span></button>
   </div>
 
 
@@ -691,7 +859,7 @@ details.setup-card[open] summary { margin-bottom: 14px; }
         </div>
         <div class="step-toggle"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
       </div>
-      <div class="step-body">
+      <div class="step-body"><div class="step-body-inner">
         <p class="step-intro">Watch videos you love and ask yourself why they work. You're not editing yet. You're learning to see what editors do.</p>
         <div class="tasks">
           <div class="task" data-task="1-1"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Watch 3 videos you love. Write down what makes each one feel good.</div><div class="task-xp">+100 XP</div></div>
@@ -701,7 +869,7 @@ details.setup-card[open] summary { margin-bottom: 14px; }
           <div class="task" data-task="1-5"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Notice what was left out of an edit. What did the editor choose not to show?</div><div class="task-xp">+100 XP</div></div>
           <div class="task" data-task="1-6"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Fill your Cut Journal for 14 days straight. 42 observations total.</div><div class="task-xp">+100 XP</div></div>
         </div>
-      </div>
+      </div></div>
     </div>
 
     <div class="step" data-step="2">
@@ -715,7 +883,7 @@ details.setup-card[open] summary { margin-bottom: 14px; }
         </div>
         <div class="step-toggle"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
       </div>
-      <div class="step-body">
+      <div class="step-body"><div class="step-body-inner">
         <p class="step-intro">Now you learn the core skills. These six things are behind every good edit, no matter what software you use.</p>
         <div class="tasks">
           <div class="task" data-task="2-1"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Learn your cuts: hard cuts, jump cuts, match cuts. Know what each one feels like.<br><a class="task-link" href="https://www.youtube.com/results?search_query=jump+cut+match+cut+explained+video+editing" target="_blank" rel="noopener">Watch a breakdown</a></div><div class="task-xp">+100 XP</div></div>
@@ -725,7 +893,7 @@ details.setup-card[open] summary { margin-bottom: 14px; }
           <div class="task" data-task="2-5"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Shift colour mid-edit, warm to cool. See how it changes the mood.<br><a class="task-link" href="https://www.youtube.com/results?search_query=color+grading+for+beginners+mood" target="_blank" rel="noopener">Watch a breakdown</a></div><div class="task-xp">+100 XP</div></div>
           <div class="task" data-task="2-6"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Add on-screen text timed to audio. If they have to pause to read it, it's too long.<br><a class="task-link" href="https://www.youtube.com/results?search_query=animated+text+captions+timed+to+audio+tutorial" target="_blank" rel="noopener">Watch a breakdown</a></div><div class="task-xp">+100 XP</div></div>
         </div>
-      </div>
+      </div></div>
     </div>
 
     <div class="step" data-step="3">
@@ -739,7 +907,7 @@ details.setup-card[open] summary { margin-bottom: 14px; }
         </div>
         <div class="step-toggle"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
       </div>
-      <div class="step-body">
+      <div class="step-body"><div class="step-body-inner">
         <p class="step-intro">Pick 3 creators you admire. Break down their edits frame by frame. Then rebuild them with your own footage.</p>
         <div class="tasks">
           <div class="task" data-task="3-1"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Pick 3 editors: one fast-paced, one cinematic, one minimal.</div><div class="task-xp">+100 XP</div></div>
@@ -749,7 +917,7 @@ details.setup-card[open] summary { margin-bottom: 14px; }
           <div class="task" data-task="3-5"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Recreate a third. Write one paragraph about what surprised you each time.</div><div class="task-xp">+100 XP</div></div>
           <div class="task" data-task="3-6"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Compile your notes. This is your editing playbook.</div><div class="task-xp">+100 XP</div></div>
         </div>
-      </div>
+      </div></div>
     </div>
 
     <div class="step" data-step="4">
@@ -763,7 +931,7 @@ details.setup-card[open] summary { margin-bottom: 14px; }
         </div>
         <div class="step-toggle"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
       </div>
-      <div class="step-body">
+      <div class="step-body"><div class="step-body-inner">
         <p class="step-intro">Experiment with everything you've learned. Your style is what remains when you stop copying others.</p>
         <div class="tasks">
           <div class="task" data-task="4-1"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Edit the same 30 seconds of footage three different ways.</div><div class="task-xp">+100 XP</div></div>
@@ -773,7 +941,7 @@ details.setup-card[open] summary { margin-bottom: 14px; }
           <div class="task" data-task="4-5"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Speed-ramp where nobody would. Hold a shot twice as long as feels right.</div><div class="task-xp">+100 XP</div></div>
           <div class="task" data-task="4-6"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Review all your experiments. Write down the patterns. That's your style forming.</div><div class="task-xp">+100 XP</div></div>
         </div>
-      </div>
+      </div></div>
     </div>
 
     <div class="step" data-step="5">
@@ -787,7 +955,7 @@ details.setup-card[open] summary { margin-bottom: 14px; }
         </div>
         <div class="step-toggle"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
       </div>
-      <div class="step-body">
+      <div class="step-body"><div class="step-body-inner">
         <p class="step-intro">Edit every day. Start posting. Watch what works. The best editors never stopped being students.</p>
         <div class="tasks">
           <div class="task" data-task="5-1"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Edit for 30 minutes a day for 7 days straight. Any footage. Just edit.</div><div class="task-xp">+100 XP</div></div>
@@ -797,13 +965,13 @@ details.setup-card[open] summary { margin-bottom: 14px; }
           <div class="task" data-task="5-5"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Start a swipe file. Save every edit that makes you feel something.</div><div class="task-xp">+100 XP</div></div>
           <div class="task" data-task="5-6"><div class="task-check"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="task-text">Teach one thing you learned. Post a tip or break down one of your edits.</div><div class="task-xp">+100 XP</div></div>
         </div>
-      </div>
+      </div></div>
     </div>
 
   </div>
 
   <div class="reset-row">
-    <button class="reset-btn" id="resetBtn">Reset progress</button>
+    <button class="reset-btn" id="resetBtn">Reset progress</button><button class="copy-prog" id="copyProg">Copy my progress link</button>
     <div class="reset-confirm" id="resetConfirm">
       <span>Are you sure?</span>
       <button class="reset-yes" id="resetYes">Yes, reset</button>
@@ -815,7 +983,7 @@ details.setup-card[open] summary { margin-bottom: 14px; }
 
   <div class="footer">
     <div class="footer-brand">@samadsmett</div>
-    <div class="footer-sub">Follow for more editing frameworks. <a href="/" style="color:var(--yellow);text-underline-offset:3px">See all free resources</a></div>
+    <div class="footer-sub">Follow for more editing frameworks and free resources</div>
   </div>
 
 </div>
@@ -832,13 +1000,23 @@ details.setup-card[open] summary { margin-bottom: 14px; }
 <!-- Confetti container -->
 <div class="confetti-container" id="confettiBox"></div>
 
+<!-- Share sheet (used where the phone's share menu isn't available, e.g. Instagram's browser) -->
+<div class="share-modal" id="shareModal" hidden role="dialog" aria-label="Your progress card">
+  <div class="share-sheet">
+    <img id="shareImg" alt="Your progress card">
+    <p id="shareHow">Press and hold the image to save it. Then post it to your story and tag <b>@samadsmett</b>.</p>
+    <div class="share-actions"><a class="share-go" id="shareDl" download="my-60-day-progress.png">Download image</a><button class="share-later" id="shareClose" type="button">Close</button></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
 <!-- Completion overlay -->
 <div class="complete-overlay" id="completeOverlay">
   <div class="complete-trophy">🏆</div>
   <div class="complete-title">Challenge<br><span class="yellow">Complete</span></div>
   <div class="complete-xp" id="completeXp">4,250 XP</div>
   <p class="complete-sub">You finished all 30 tasks across 5 levels. You didn't just learn editing. You built a style. Now go make something only you could make.</p>
-  <button class="complete-cta" id="completeDismiss">Back to challenge</button>
+  <div class="complete-actions"><button class="complete-cta complete-share" id="completeShare">Share it</button><button class="complete-cta" id="completeDismiss">Back to challenge</button></div>
 </div>
 
 <script>
@@ -869,6 +1047,34 @@ details.setup-card[open] summary { margin-bottom: 14px; }
     try { localStorage.setItem(KEY, JSON.stringify([...done])); } catch(e) {}
   }
 
+  // ── EMAIL (Kit) ─────────────────────────────────────────────
+  // Paste your Kit form ID here (the number in the form's share/embed URL).
+  const KIT_FORM_ID = '';
+  const EMAIL_KEY = 'smett-60day-email';     // '1' once subscribed
+  const SNOOZE_KEY = 'smett-60day-snooze';   // task count when "Not now" was tapped
+
+  // ── PROGRESS LINK: #p=<tasks>.<start> restores progress on any device ──
+  const ALL_IDS = [];
+  for (let s = 1; s <= 5; s++) for (let i = 1; i <= PER_STEP; i++) ALL_IDS.push(s + '-' + i);
+  function progressLink() {
+    let bits = 0;
+    ALL_IDS.forEach((id, i) => { if (done.has(id)) bits += Math.pow(2, i); });
+    const base = location.href.split('#')[0].split('?')[0];
+    return base + '#p=' + bits.toString(36) + '.' + (getStart() || 0).toString(36);
+  }
+  (function restoreFromLink() {
+    const m = location.hash.match(/^#p=([0-9a-z]+)\.([0-9a-z]+)$/);
+    if (!m) return;
+    const bits = parseInt(m[1], 36), start = parseInt(m[2], 36);
+    ALL_IDS.forEach((id, i) => { if (Math.floor(bits / Math.pow(2, i)) % 2) done.add(id); });
+    try {
+      if (start && (!getStart() || start < getStart())) localStorage.setItem(START_KEY, String(start));
+      if (done.size) markSetup();
+    } catch(e) {}
+    save();
+    history.replaceState(null, '', location.href.split('#')[0]);
+  })();
+
   function stepDone(n) {
     let c = 0;
     for (let i = 1; i <= PER_STEP; i++) if (done.has(n + '-' + i)) c++;
@@ -891,6 +1097,60 @@ details.setup-card[open] summary { margin-bottom: 14px; }
   }
 
   const LEVEL_NAMES = ['', 'How Editing Works', 'Fundamentals', 'Study & Recreate', 'Build Your Style', 'Edit, Post, Repeat'];
+
+  // Animated counter
+  function animateValue(el, from, to, duration) {
+    if (from === to) return;
+    const start = performance.now();
+    const diff = to - from;
+    function tick(now) {
+      const t = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3); // easeOutCubic
+      el.textContent = Math.round(from + diff * ease).toLocaleString();
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    el.classList.remove('xp-tick');
+    void el.offsetWidth;
+    el.classList.add('xp-tick');
+  }
+
+  function animatePct(el, from, to, duration) {
+    if (from === to) return;
+    const start = performance.now();
+    const diff = to - from;
+    function tick(now) {
+      const t = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      el.textContent = Math.round(from + diff * ease) + '%';
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // Floating XP near task
+  function spawnFloatXP(taskEl) {
+    const rect = taskEl.getBoundingClientRect();
+    const f = document.createElement('div');
+    f.className = 'xp-float';
+    f.textContent = '+100 XP';
+    f.style.left = (rect.right - 70) + 'px';
+    f.style.top = (rect.top + window.scrollY) + 'px';
+    document.body.appendChild(f);
+    setTimeout(() => f.remove(), 1100);
+  }
+
+  // Pulse the next card
+  function pulseNext() {
+    const nc = document.getElementById('nextCard');
+    nc.classList.remove('pulse');
+    void nc.offsetWidth;
+    nc.classList.add('pulse');
+  }
+
+  // Track previous values for animated counting
+  let prevXp = 0;
+  let prevPct = 0;
 
   // Confetti
   function fireConfetti() {
@@ -943,11 +1203,12 @@ details.setup-card[open] summary { margin-bottom: 14px; }
     wheelFill.classList.toggle('complete', isComplete);
 
     const wheelPct = document.getElementById('wheelPct');
-    wheelPct.textContent = pct + '%';
+    if (taskJustDone) { animatePct(wheelPct, prevPct, pct, 600); } else { wheelPct.textContent = pct + '%'; }
     wheelPct.classList.toggle('complete', isComplete);
 
     // XP
-    document.getElementById('xpTotal').textContent = xp.toLocaleString();
+    const xpEl = document.getElementById('xpTotal');
+    if (taskJustDone) { animateValue(xpEl, prevXp, xp, 600); } else { xpEl.textContent = xp.toLocaleString(); }
     document.getElementById('statDone').textContent = count;
     document.getElementById('statLeft').textContent = TOTAL - count;
     document.getElementById('statLevel').textContent = currentLevel();
@@ -964,7 +1225,16 @@ details.setup-card[open] summary { margin-bottom: 14px; }
     }
 
     // Sticky
-    document.getElementById('stickyXp').textContent = xp.toLocaleString() + ' XP';
+    const sxp = document.getElementById('stickyXp');
+    if (taskJustDone) {
+      const from = prevXp;
+      const start = performance.now();
+      (function tk(now) {
+        const t = Math.min((now - start) / 600, 1);
+        sxp.textContent = Math.round(from + (xp - from) * (1 - Math.pow(1 - t, 3))).toLocaleString() + ' XP';
+        if (t < 1) requestAnimationFrame(tk);
+      })(start);
+    } else { sxp.textContent = xp.toLocaleString() + ' XP'; }
     document.getElementById('stickyFill').style.width = pct + '%';
     document.getElementById('stickyFill').classList.toggle('complete', isComplete);
     const sc = document.getElementById('stickyCount');
@@ -1057,8 +1327,187 @@ details.setup-card[open] summary { margin-bottom: 14px; }
       }, 500);
     }
 
+    // Save-progress card: after Step 1 is done, or from day 3 once they've started
+    let subscribed = false, snooze = -1;
+    try { subscribed = localStorage.getItem(EMAIL_KEY) === '1'; snooze = +(localStorage.getItem(SNOOZE_KEY) ?? -1); } catch(e) {}
+    const due = !!KIT_FORM_ID && (stepDone(1) === PER_STEP || (count >= 1 && day >= 3));
+    const snoozed = snooze >= 0 && count < snooze + 6;
+    const saveCard = document.getElementById('saveCard');
+    if (!subscribed && due && !snoozed && !isComplete) {
+      if (saveCard.hidden) { saveCard.hidden = false; requestAnimationFrame(() => requestAnimationFrame(() => saveCard.classList.add('show'))); }
+    } else if (!saveCard.dataset.keep) { saveCard.hidden = true; saveCard.classList.remove('show'); }
+    // Share card: after each completed level, until shared or put off
+    let sharedLv = 0; try { sharedLv = +localStorage.getItem(SHARED_KEY) || 0; } catch(e) {}
+    const shareCard = document.getElementById('shareCard');
+    if (levels > sharedLv && !isComplete) {
+      document.getElementById('shareCardTitle').textContent = 'Level ' + levels + ' done.';
+      if (shareCard.hidden || shareCard.dataset.lv !== String(levels)) {
+        shareCard.dataset.lv = String(levels);
+        makeImage().then(b => { if (b) document.getElementById('shareThumb').src = URL.createObjectURL(b); });
+        shareCard.hidden = false;
+        requestAnimationFrame(() => requestAnimationFrame(() => shareCard.classList.add('show')));
+      }
+    } else { shareCard.hidden = true; shareCard.classList.remove('show'); }
+
+    if (!document.getElementById('saveDone').hidden) document.getElementById('progLink').value = progressLink();
+
     prevLevels = levels;
+    prevXp = xp;
+    prevPct = pct;
   }
+
+  // ── SHARE MY PROGRESS ─────────────────────────────────────
+  const SHARED_KEY = 'smett-60day-shared-level';
+  const HANDLE = '@samadsmett';
+  const IN_APP = /Instagram|FBAN|FBAV|FB_IAB|TikTok|musical_ly/i.test(navigator.userAgent);
+
+  async function makeImage() {
+    try { await Promise.all(['900 100px Inter', '800 34px Inter', '700 46px Inter', '600 44px Inter', '400 40px Inter']
+      .map(f => document.fonts.load(f).catch(() => {}))); } catch(e) {}
+    const W = 1080, H = 1920, cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    const x = cv.getContext('2d');
+    const count = done.size, pct = Math.round(count / TOTAL * 100), lv = levelsComplete(), xpv = totalXp(), complete = count === TOTAL;
+    const st = getStart(), day = st ? Math.floor((Date.now() - st) / 86400000) + 1 : 1;
+    const Y = '#FFFB00', GR = '#34D399', acc = complete ? GR : Y;
+    const F = (w, sz) => w + ' ' + sz + 'px Inter, system-ui, sans-serif';
+    function rr(a, b, w, h, r) { x.beginPath(); if (x.roundRect) x.roundRect(a, b, w, h, r); else x.rect(a, b, w, h); }
+    function tx(str, X, Yp, font, col, align, ls) {
+      x.font = font; x.fillStyle = col; x.textAlign = align || 'left';
+      try { x.letterSpacing = (ls || 0) + 'px'; } catch(e) {}
+      x.fillText(str, X, Yp);
+    }
+    x.fillStyle = '#0A0A0A'; x.fillRect(0, 0, W, H);
+    tx(HANDLE, 90, 250, F(600, 44), Y);
+    tx('60-Day Editing', 90, 368, F(900, 104), '#FFFFFF', 'left', -3);
+    tx('Challenge', 90, 478, F(900, 104), Y, 'left', -3);
+    // wheel
+    const cx = 540, cy = 815, r = 215;
+    x.lineWidth = 46; x.lineCap = 'round';
+    x.strokeStyle = '#262626'; x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.stroke();
+    if (count) { x.strokeStyle = acc; x.beginPath(); x.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * count / TOTAL); x.stroke(); }
+    tx(pct + '%', cx, cy + 32, F(900, 124), acc, 'center', -3);
+    tx('complete', cx, cy + 92, F(400, 40), '#A3A3A3', 'center');
+    // day + xp
+    const dayTxt = complete ? 'Finished on day ' + day : (day > 60 ? 'Day ' + day : 'Day ' + day + ' of 60');
+    tx(dayTxt, 540, 1160, F(900, 78), '#FFFFFF', 'center', -2);
+    tx(xpv.toLocaleString() + ' XP  ·  ' + count + '/30 tasks', 540, 1232, F(600, 40), '#A3A3A3', 'center');
+    // level badge
+    if (lv > 0) {
+      const label = complete ? 'CHALLENGE COMPLETE' : 'LEVEL ' + lv + ' COMPLETE';
+      x.font = F(800, 34); try { x.letterSpacing = '2px'; } catch(e) {}
+      const bw = x.measureText(label).width + 68;
+      x.fillStyle = GR; rr(540 - bw / 2, 1282, bw, 72, 36); x.fill();
+      tx(label, 540, 1330, F(800, 34), '#0A0A0A', 'center', 2);
+    }
+    // five step bars
+    const sw = 160, gap = 25, x0 = 540 - (5 * sw + 4 * gap) / 2;
+    for (let s = 1; s <= 5; s++) {
+      const bx = x0 + (s - 1) * (sw + gap), f = stepDone(s) / PER_STEP;
+      x.fillStyle = '#262626'; rr(bx, 1412, sw, 14, 7); x.fill();
+      if (f > 0) { x.fillStyle = f === 1 ? GR : Y; rr(bx, 1412, Math.max(14, sw * f), 14, 7); x.fill(); }
+    }
+    // where to get it
+    tx('Get the free challenge', 540, 1520, F(400, 38), '#A3A3A3', 'center');
+    tx('learn.kreateline.com/60-day', 540, 1584, F(700, 48), Y, 'center');
+    return new Promise(res => cv.toBlob(res, 'image/png'));
+  }
+
+  let toastTimer;
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+  }
+  function copyHandle() {
+    try {
+      if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(HANDLE).then(() => {}, () => {}); return true; }
+      const i = document.createElement('textarea'); i.value = HANDLE; document.body.appendChild(i); i.select();
+      const ok = document.execCommand('copy'); i.remove(); return ok;
+    } catch(e) { return false; }
+  }
+  function markShared() {
+    try { localStorage.setItem(SHARED_KEY, String(levelsComplete())); } catch(e) {}
+    const c = document.getElementById('shareCard'); c.classList.remove('show'); setTimeout(() => { c.hidden = true; }, 300);
+  }
+  async function shareProgress() {
+    const copied = copyHandle();
+    const blob = await makeImage();
+    if (!blob) return;
+    const file = new File([blob], 'my-60-day-progress.png', { type: 'image/png' });
+    if (!IN_APP && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], text: 'Doing the free 60-Day Editing Challenge with ' + HANDLE });
+        markShared();
+        if (copied) toast(HANDLE + ' is copied. Paste it on your story to tag me.');
+        return;
+      } catch (e) { if (e && e.name === 'AbortError') return; }
+    }
+    const url = URL.createObjectURL(blob);
+    document.getElementById('shareImg').src = url;
+    document.getElementById('shareDl').href = url;
+    document.getElementById('shareModal').hidden = false;
+    markShared();
+    if (copied) toast(HANDLE + ' is copied. Paste it on your story to tag me.');
+  }
+  document.getElementById('shareBtn').addEventListener('click', shareProgress);
+  document.getElementById('shareCardBtn').addEventListener('click', shareProgress);
+  document.getElementById('completeShare').addEventListener('click', shareProgress);
+  document.getElementById('shareCardLater').addEventListener('click', markShared);
+  document.getElementById('shareClose').addEventListener('click', () => { document.getElementById('shareModal').hidden = true; });
+  document.getElementById('shareModal').addEventListener('click', e => { if (e.target.id === 'shareModal') e.currentTarget.hidden = true; });
+
+  // ── Save-progress form ──
+  const saveForm = document.getElementById('saveForm');
+  const saveErr = document.getElementById('saveErr');
+  const saveBtn = document.getElementById('saveBtn');
+  function showErr(msg) { saveErr.textContent = msg; saveErr.hidden = false; }
+  saveForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    saveErr.hidden = true;
+    const email = document.getElementById('saveEmail').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return showErr('That email doesn\'t look right. Check it and try again.');
+    if (!KIT_FORM_ID) return showErr('Email signups aren\'t connected yet. Add the Kit form ID to the page.');
+    saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
+    const url = 'https://app.kit.com/forms/' + KIT_FORM_ID + '/subscriptions';
+    const body = new FormData();
+    body.append('email_address', email);
+    let ok = false;
+    try {
+      const r = await fetch(url, { method: 'POST', body, headers: { Accept: 'application/json' } });
+      ok = r.ok;
+      if (!ok) { const j = await r.json().catch(() => ({})); if (j && j.errors) throw new Error('rejected'); }
+    } catch (err) {
+      if (err.message === 'rejected') { ok = false; }
+      else { try { await fetch(url, { method: 'POST', body, mode: 'no-cors' }); ok = true; } catch (e2) { ok = false; } }
+    }
+    saveBtn.disabled = false; saveBtn.textContent = 'Save my progress';
+    if (!ok) return showErr('Couldn\'t save that just now. Check your connection and try again.');
+    try { localStorage.setItem(EMAIL_KEY, '1'); } catch(e) {}
+    document.getElementById('saveCard').dataset.keep = '1';
+    saveForm.hidden = true;
+    document.getElementById('saveFine').hidden = true;
+    document.getElementById('saveIntro').hidden = true;
+    document.querySelector('.save-head strong').textContent = 'Progress saved';
+    document.getElementById('progLink').value = progressLink();
+    document.getElementById('saveDone').hidden = false;
+  });
+  document.getElementById('saveClose').addEventListener('click', () => {
+    const sc = document.getElementById('saveCard');
+    delete sc.dataset.keep;
+    try { if (localStorage.getItem(EMAIL_KEY) !== '1') localStorage.setItem(SNOOZE_KEY, String(done.size)); } catch(e) {}
+    sc.classList.remove('show');
+    setTimeout(() => { sc.hidden = true; }, 300);
+  });
+  function copyText(text, btn) {
+    const done_ = () => { const t = btn.textContent; btn.textContent = 'Copied'; setTimeout(() => { btn.textContent = t; }, 1500); };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done_, () => fallback());
+    else fallback();
+    function fallback() { const i = document.createElement('textarea'); i.value = text; document.body.appendChild(i); i.select();
+      try { document.execCommand('copy'); done_(); } catch(e) {} i.remove(); }
+  }
+  document.getElementById('copyLink').addEventListener('click', e => copyText(progressLink(), e.currentTarget));
+  document.getElementById('copyProg').addEventListener('click', e => copyText(progressLink(), e.currentTarget));
 
   // Task clicks
   document.querySelectorAll('.task').forEach(task => {
@@ -1070,6 +1519,10 @@ details.setup-card[open] summary { margin-bottom: 14px; }
         done.add(id);
         setStart();
         showXpPopup('+' + XP_PER_TASK + ' XP');
+        spawnFloatXP(task);
+        task.classList.add('just-done');
+        setTimeout(() => task.classList.remove('just-done'), 800);
+        setTimeout(pulseNext, 350);
       } else {
         done.delete(id);
       }
@@ -1089,7 +1542,7 @@ details.setup-card[open] summary { margin-bottom: 14px; }
   // Up next button
   document.getElementById('nextBtn').addEventListener('click', () => {
     const id = document.getElementById('nextBtn').dataset.task;
-    if (id === 'setup') { finishSetup(); return; }
+    if (id === 'setup') { finishSetup(); pulseNext(); return; }
     const t = document.querySelector('.task[data-task="' + id + '"]');
     if (!t) return;
     const nt = document.getElementById('nextTask');
@@ -1142,6 +1595,8 @@ details.setup-card[open] summary { margin-bottom: 14px; }
 
   // Init
   prevLevels = levelsComplete();
+  prevXp = totalXp();
+  prevPct = Math.round((done.size / TOTAL) * 100);
   if (/Instagram|FBAN|FBAV|FB_IAB|TikTok|musical_ly/i.test(navigator.userAgent)) document.getElementById('igBanner').classList.add('show');
   const first = [...document.querySelectorAll('.step')].find(st => [...st.querySelectorAll('.task')].some(t => !done.has(t.dataset.task))) || document.querySelector('.step[data-step="1"]');
   if (first) { first.classList.add('open'); first.querySelector('.step-header').setAttribute('aria-expanded', 'true'); }
